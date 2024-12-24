@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.spring.dtolib.order.dto.Notification;
 import org.spring.dtolib.order.dto.PayedOrder;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.support.KafkaHeaders;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Service;
 import org.spring.dtolib.order.dto.PubOrder;
 
@@ -16,7 +18,7 @@ public class PaymentConsumer {
     private final NotificationProducer notificationProducer;
 
     @KafkaListener(topics = "new_orders1", groupId = "order_consumers")
-    public void listener(PubOrder order) {
+    public void listener(PubOrder order, @Header(KafkaHeaders.RECEIVED_PARTITION) int partition) {
         log.info("Получено сообщение из топика: new_orders1");
 
         if(!order.isPayment()) {
